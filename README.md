@@ -1,6 +1,6 @@
-# Spring Cloud Graalvm Samples
+# Spring Boot Graalvm Samples
 
-Spring Cloud Graalvm Samples
+Spring Boot Graalvm Samples
 
 <img src="https://github.com/susimsek/spring-boot-graalvm-samples/blob/main/images/introduction.png" alt="Spring Boot Graalvm Samples" width="100%" height="100%"/> 
 
