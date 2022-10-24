@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: spring-graalvm-service
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    restart:
+      enabled: true
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+server:
+  error:
+    include-binding-errors: always
+    include-message: always

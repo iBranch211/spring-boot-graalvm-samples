@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-native-service
+  labels:
+    {{- include "spring-native-service.labels" . | nindent 4 }}
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      {{- include "spring-native-service.selectorLabels" . | nindent 6 }}
+      version: v1
+  {{- if .Values.global.updateStrategy }}
+  {{- if not .Values.springNativeService.autoscaling.enabled }}
+  replicas: {{ .Values.springNativeService.replicaCount }}
+  {{- end }}
+  strategy: {{- toYaml .Values.global.updateStrategy | nindent 4 }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "spring-native-service.selectorLabels" . | nindent 8 }}
+        version: v1
+    spec:
+      serviceAccountName: {{ template "app.serviceAccountName" . }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - spring-native-service
+                topologyKey: kubernetes.io/hostname
+              weight: 100
+      {{- if .Values.global.imagePullSecrets }}
+      imagePullSecrets: {{- toYaml .Values.global.imagePullSecrets | nindent 4 }}
+      {{- end }}
+      containers:
+        {{- if .Values.springNativeService.extraSideContainers }}
+        {{ tpl .Values.springNativeService.extraSideContainers . | indent 8 }}
+        {{- end }}
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.springNativeService.image.repository }}:{{ .Values.springNativeService.image.tag }}"
+          imagePullPolicy: {{ .Values.springNativeService.image.pullPolicy }}
+          {{- if .Values.springNativeService.command }}
+          command:
+          {{ tpl .Values.springNativeService.command . | indent 12 }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.springNativeService.containerPorts.http }}
+          {{- if .Values.springNativeService.livenessProbe.enabled }}
+          livenessProbe: {{- omit .Values.springNativeService.livenessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.springNativeService.customLivenessProbe }}
+          livenessProbe: {{- toYaml .Values.springNativeService.customLivenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.springNativeService.readinessProbe.enabled }}
+          readinessProbe: {{- omit .Values.springNativeService.readinessProbe "enabled" | toYaml | nindent 12 }}
+          {{- else if .Values.springNativeService.customReadinessProbe }}
+          readinessProbe: {{- toYaml .Values.springNativeService.customReadinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.springNativeService.resources }}
+          resources: {{- toYaml .Values.springNativeService.resources | nindent 12 }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: db-secret
+            - configMapRef:
+                name: spring-native-service-config
+          volumeMounts:
+          {{- if .Values.springNativeService.extraVolumeMounts }}
+          {{- toYaml .Values.springNativeService.extraVolumeMounts | nindent 12 }}
+      {{- end }}
+      {{- if .Values.springNativeService.extraInitContainers }}
+      initContainers:
+      {{ tpl .Values.springNativeService.extraInitContainers . | indent 8 }}
+      {{- end }}
+      volumes:
+      {{- if .Values.springNativeService.extraVolumes }}
+      {{- toYaml .Values.springNativeService.extraVolumes | nindent 8 }}
+  {{- end }}

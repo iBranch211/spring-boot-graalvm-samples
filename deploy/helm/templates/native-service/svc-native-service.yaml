@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-native-service
+  labels:
+  {{- include "spring-native-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.springNativeService.service.type }}
+  {{- if and (eq .Values.springNativeService.service.type "LoadBalancer") .Values.springNativeService.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.springNativeService.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and (eq .Values.springNativeService.service.type "ClusterIP") .Values.springNativeService.service.clusterIP }}
+  clusterIP: {{ .Values.springNativeService.service.clusterIP }}
+  {{- end }}
+  ports:
+    - port: {{ .Values.springNativeService.service.port }}
+      targetPort: http
+      {{- if and (or (eq .Values.springNativeService.service.type "NodePort") (eq .Values.springNativeService.service.type "LoadBalancer")) .Values.springNativeService.service.nodePort }}
+      nodePort: {{ .Values.springNativeService.service.nodePort }}
+      {{- else if eq .Values.springNativeService.service.type "ClusterIP" }}
+      nodePort: null
+      {{- end }}
+      name: http
+  selector:
+  {{- include "spring-native-service.selectorLabels" . | nindent 4 }}

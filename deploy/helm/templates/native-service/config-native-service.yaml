@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: spring-native-service-config
+  labels:
+  {{- include "spring-native-service.labels" . | nindent 4 }}
+data:
+  SPRING_PROFILES_ACTIVE: {{ .Values.spring.profiles.active }}
+  PORT: {{ .Values.springNativeService.containerPorts.http | quote}}
+  SPRING_DATA_MONGODB_URI: mongodb://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@mongodb:27017/demo

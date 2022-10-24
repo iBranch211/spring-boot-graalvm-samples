@@ -1,0 +1,28 @@
+{{- if .Values.springNativeService.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: spring-native-service
+  labels:
+  {{- include "spring-native-service.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: spring-native-service
+  minReplicas: {{ .Values.springNativeService.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.springNativeService.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.springNativeService.autoscaling.targetCPU }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.springNativeService.autoscaling.targetCPU }}
+    {{- end }}
+    {{- if .Values.springNativeService.autoscaling.targetMemory }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.springNativeService.autoscaling.targetMemory  }}
+  {{- end }}
+  {{- end }}

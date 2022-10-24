@@ -1,0 +1,12 @@
+server:
+  forward-headers-strategy: framework
+  shutdown: graceful
+  port: ${PORT:8080}
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://user:iXCjXb7e2yjJbjRu@localhost:27017/demo
+
+todo-client:
+  base-url: https://jsonplaceholder.typicode.com

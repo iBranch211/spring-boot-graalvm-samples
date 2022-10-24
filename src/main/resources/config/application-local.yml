@@ -1,0 +1,9 @@
+server:
+  port: ${PORT:9091}
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://test_user123456:4hRsOKoJxkHswunQ@cluster0.nbzfi.mongodb.net/demo
+
+todo-client:
+  base-url: https://jsonplaceholder.typicode.com
