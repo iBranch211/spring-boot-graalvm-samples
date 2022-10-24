@@ -6,6 +6,7 @@ import io.github.susimsek.springbootgraalvmsamples.properties.TodoClientProperti
 import io.github.susimsek.springbootgraalvmsamples.service.TodoService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -24,6 +25,7 @@ class TodoRestController(
     }
 
     @PostMapping(value = ["/todo"])
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     fun createTodo(@Valid @RequestBody todo: AddTodoRequest): Mono<Todo> {
         return todoService.createTodo(todo)

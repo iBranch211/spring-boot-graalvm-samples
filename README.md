@@ -143,6 +143,7 @@ following bash command
 * Detekt
 * Mongodb
 * Spring Boot
-* Spring Boot Web Flux
+* Spring Boot Webflux
+* Spring Boot Security
 * Spring Boot Validation
 * Spring Boot Actuator
