@@ -1,5 +1,9 @@
 server:
   port: ${PORT:9091}
+  error:
+    include-binding-errors: always
+    include-message: always
+    include-exception: true
 spring:
   data:
     mongodb:

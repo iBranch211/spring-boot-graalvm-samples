@@ -5,6 +5,10 @@ spring:
     active: local
   main:
     allow-bean-definition-overriding: true
+  webflux:
+    problemdetails:
+      enabled: true
+
 management:
   endpoints:
     web:
@@ -24,8 +28,3 @@ management:
       enabled: true
     readinessstate:
       enabled: true
-
-server:
-  error:
-    include-binding-errors: always
-    include-message: always
